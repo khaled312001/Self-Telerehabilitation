@@ -1,0 +1,164 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #0397a1;
+  animation: gradientAnimation 10s infinite alternate;
+}
+
+#imageContainer {
+  text-align: center;
+}
+
+#surveyContainer {
+  display: none;
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#startSurvey {
+  background-color: #e26195;
+  color: white;
+  padding: 25px 50px;
+  border: none;
+  font-size: larger;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes gradientAnimation {
+  0% {
+      background-position: 0% 0%;
+  }
+  100% {
+      background-position: 100% 100%;
+  }
+}
+
+#survey-container {
+  max-width: 500px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Media Query for Responsive View */
+@media only screen and (max-width: 600px), only screen and (max-height: 600px) {
+  #surveyContainer,
+  #survey-container {
+      max-width: 100%;
+      margin: 10px;
+      padding: 10px;
+  }
+
+  #startSurvey {
+      padding: 15px 30px;
+  }
+
+  #nextButton,
+  #backButton {
+      padding: 15px 30px;
+      margin-top: 10px;
+  }
+}
+
+.question {
+  font-size: x-large;
+  display: none;
+}
+
+.options {
+  margin-top: 10px;
+}
+
+.option {
+  margin-bottom: 5px;
+}
+
+.more-info {
+  padding-top: 30px;
+  font-size: medium;
+  color: #4CAF50;
+  margin-top: 10px;
+}
+
+#nextButton {
+  margin-top: 10px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px; /* Add margin to create space between buttons */
+}
+
+#backButton {
+  background-color: #FF0000; /* Red */
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #4CAF50;
+  color: #ffffff;
+}
+
+#result-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
+
+#result {
+  margin-bottom: 10px;
+}
+
+#continueButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#instructionVideo {
+  display: none;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}

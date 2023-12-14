@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neurological Exam Survey</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 style="text-align: center;color: aliceblue; padding-bottom: 70px;padding-top: 100px;">Self Telerehabilitation project</h1>
+
+  <div id="imageContainer">
+      <img src="image.webp" alt="Survey Image">
+      <br>
+      <button id="startSurvey" onclick="startSurvey()">Start Survey</button>
+  </div>
+
+  <div id="surveyContainer">
+
+
+      <div class="question" id="question1">
+    <p>1a. Level of Consciousness</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q1" value="0"> Alert</div>
+      <div class="option"><input type="radio" name="q1" value="1"> Not alert; arousable by minor stimulation</div>
+      <div class="option"><input type="radio" name="q1" value="2"> Not alert; requires repeated stimulation</div>
+      <div class="option"><input type="radio" name="q1" value="3"> Responds only with reflex motor effects</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>The investigator must choose a response if a full evaluation is prevented by such obstacles as an endotracheal tube, language barrier, orotracheal trauma/bandages. A 3 is scored only if the patient makes no movement (other than reflexive posturing) in response to noxious stimulation.</p>
+    </div>
+    <span class="message" id="message1"></span>
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+
+    <button id="nextButton" onclick="validateAnswer('q1')">Next</button>
+  </div>
+
+  <div class="question" id="question2">
+    <p>1b. LOC Questions</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q2" value="0"> Answers both questions correctly</div>
+      <div class="option"><input type="radio" name="q2" value="1"> Answers one question correctly</div>
+      <div class="option"><input type="radio" name="q2" value="2"> Answers neither question correctly</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>The patient is asked the month and his/her age. The answer must be correct - there is no partial credit for being close .  Aphasic and stuporous patients who do not comprehend the questions will score 2. Patients unable to speak because of endotracheal intubation, orotracheal trauma, severe dysarthria from any cause, language barrier, or any other problem not secondary to aphasia are given a 1. It is important that only the initial answer be graded and that the examiner not "help" the patient with verbal or non-verbal cues.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q2')">Next</button>
+  </div>
+
+<!-- Add this section after the existing questions -->
+<div class="question" id="question3">
+    <p>3. 1c. LOC Commands</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q3" value="0"> Performs both tasks correctly</div>
+      <div class="option"><input type="radio" name="q3" value="1"> Performs one task correctly</div>
+      <div class="option"><input type="radio" name="q3" value="2"> Performs neither task correctly</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>The patient is asked to open and close the eyes and then to grip and release the non-paretic hand. Substitute another one-step command if the hands cannot be used. Credit is given if an unequivocal attempt is made but not completed due to weakness. If the patient does not respond to command, the task should be demonstrated to him or her (pantomime), and the result scored (i.e., follows none, one, or two commands). Patients with trauma, amputation, or other physical impediments should be given suitable one-step commands. Only the first attempt is scored.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q3')">Next</button>
+  </div>
+  
+  <!-- Question 4 -->
+  <div class="question" id="question4">
+    <p>4. 2. Best Gaze</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q4" value="0"> Normal</div>
+      <div class="option"><input type="radio" name="q4" value="1"> Partial gaze palsy</div>
+      <div class="option"><input type="radio" name="q4" value="2"> Forced deviation or total gaze paresis</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>Only horizontal eye movements will be tested. Voluntary or reflexive (oculocephalic) eye movements will be scored, but caloric testing is not done. If the patient has a conjugate deviation of the eyes that can be overcome by voluntary or reflexive activity, the score will be 1. If a patient has an isolated peripheral nerve paresis (CN III, IV, or VI), score a 1. Gaze is testable in all aphasic patients. Patients with ocular trauma, bandages, pre-existing blindness, or other disorder of visual acuity or fields should be tested with reflexive movements, and a choice made by the investigator. Establishing eye contact and then moving about the patient from side to side will occasionally clarify the presence of a partial gaze palsy.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q4')">Next</button>
+  </div>
+  
+  <!-- Question 5 -->
+  <div class="question" id="question5">
+    <p>5. 3. Visual</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q5" value="0"> No visual loss</div>
+      <div class="option"><input type="radio" name="q5" value="1"> Partial hemianopia</div>
+      <div class="option"><input type="radio" name="q5" value="2"> Complete hemianopia</div>
+      <div class="option"><input type="radio" name="q5" value="3"> Bilateral hemianopia</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>Visual fields (upper and lower quadrants) are tested by confrontation, using finger counting or visual threat, as appropriate. Patients may be encouraged, but if they look at the side of the moving fingers appropriately, this can be scored as normal. If there is unilateral blindness or enucleation, visual fields in the remaining eye are scored. Score 1 only if a clear-cut asymmetry, including quadrantanopia, is found. If a patient is blind from any cause, score 3. Double simultaneous stimulation is performed at this point. If there is extinction, the patient receives a 1, and the results are used to respond to item 11.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q5')">Next</button>
+  </div>
+  
+  <!-- Question 6 -->
+  <div class="question" id="question6">
+    <p>6. 4. Facial Palsy</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q6" value="0"> Normal symmetrical movements</div>
+        <div class="option"><input type="radio" name="q6" value="1"> Minor paralysis</div>
+        <div class="option"><input type="radio" name="q6" value="2"> Partial paralysis</div>
+        <div class="option"><input type="radio" name="q6" value="3"> Complete paralysis</div>
+      </div>
+      <div class="more-info">
+        <p>More Information:</p>
+        <p>Ask – or use pantomime to encourage – the patient to show teeth or raise eyebrows and close eyes. Score symmetry of grimace in response to noxious stimuli in the poorly responsive or non-comprehending patient. If facial trauma/bandages, orotracheal tube, tape, or other physical barriers obscure the face, these should be removed to the extent possible.</p>
+      </div>
+      <span class="message" id="message1"></span>
+
+      <button id="backButton" onclick="prevQuestion()">Back</button>
+      <button id="nextButton" onclick="validateAnswer('q6')">Next</button>
+    </div>
+    
+    <!-- Question 7 -->
+    <div class="question" id="question7">
+      <p>7. 5a. Left Arm</p>
+      <div class="options">
+        <div class="option"><input type="radio" name="q7" value="0"> No drift</div>
+        <div class="option"><input type="radio" name="q7" value="1"> Drift</div>
+        <div class="option"><input type="radio" name="q7" value="2"> Some effort against gravity</div>
+        <div class="option"><input type="radio" name="q7" value="3"> No effort against gravity</div>
+        <div class="option"><input type="radio" name="q7" value="4"> No movement</div>
+        <div class="option"><input type="radio" name="q7" value="5"> Amputation or joint fusion</div>
+      </div>
+      <div class="more-info">
+        <p>More Information:</p>
+        <p>The limb is placed in the appropriate position: extend the arms (palms down) 90 degrees (if sitting) or 45 degrees (if supine). Drift is scored if the arm falls before 10 seconds. The aphasic patient is encouraged using urgency in the voice and pantomime, but not noxious stimulation. Each limb is tested in turn, beginning with the non-paretic arm. Only in the case of amputation or joint fusion at the shoulder, the examiner should record the score as untestable (UN), and clearly write the explanation for this choice.</p>
+      </div>
+      <span class="message" id="message1"></span>
+
+      <button id="backButton" onclick="prevQuestion()">Back</button>
+      <button id="nextButton" onclick="validateAnswer('q7')">Next</button>
+    </div>
+    
+    <!-- Question 8 -->
+    <div class="question" id="question8">
+      <p>8. 5b. Right Arm</p>
+      <div class="options">
+        <div class="option"><input type="radio" name="q8" value="0"> No drift</div>
+        <div class="option"><input type="radio" name="q8" value="1"> Drift</div>
+        <div class="option"><input type="radio" name="q8" value="2"> Some effort against gravity</div>
+        <div class="option"><input type="radio" name="q8" value="3"> No effort against gravity</div>
+        <div class="option"><input type="radio" name="q8" value="4"> No movement</div>
+        <div class="option"><input type="radio" name="q8" value="5"> Amputation or joint fusion</div>
+      </div>
+      <div class="more-info">
+        <p>More Information:</p>
+        <p>The limb is placed in the appropriate position: extend the arms (palms down) 90 degrees (if sitting) or 45 degrees (if supine). Drift is scored if the arm falls before 10 seconds. The aphasic patient is encouraged using urgency in the voice and pantomime, but not noxious stimulation. Each limb is tested in turn, beginning with the non-paretic arm. Only in the case of amputation or joint fusion at the shoulder, the examiner should record the score as untestable (UN), and clearly write the explanation for this choice.</p>
+      </div>
+      <span class="message" id="message1"></span>
+
+      <button id="backButton" onclick="prevQuestion()">Back</button>
+      <button id="nextButton" onclick="validateAnswer('q8')">Next</button>
+    </div>
+    
+    <!-- Question 9 -->
+    <div class="question" id="question9">
+      <p>9. 6a. Left Leg</p>
+      <div class="options">
+        <div class="option"><input type="radio" name="q9" value="0"> No drift</div>
+        <div class="option"><input type="radio" name="q9" value="1"> Drift</div>
+        <div class="option"><input type="radio" name="q9" value="2"> Some effort against gravity</div>
+        <div class="option"><input type="radio" name="q9" value="3"> No effort against gravity</div>
+        <div class="option"><input type="radio" name="q9" value="4"> No movement</div>
+        <div class="option"><input type="radio" name="q9" value="5"> Amputation or fusion</div>
+      </div>
+      <div class="more-info">
+        <p>More Information:</p>
+        <p>The limb is placed in the appropriate position: hold the leg at 30 degrees (always tested supine). Drift is scored if the leg falls before 5 seconds. The aphasic patient is encouraged using urgency in the voice and pantomime, but not noxious stimulation. Each limb is tested in turn, beginning with the non-paretic leg. Only in the case of amputation or joint fusion at the hip, the examiner should record the score as untestable (UN), and clearly write the explanation for this choice.</p>
+      </div>
+      <span class="message" id="message1"></span>
+
+      <button id="backButton" onclick="prevQuestion()">Back</button>
+      <button id="nextButton" onclick="validateAnswer('q9')">Next</button>
+    </div>
+    
+    <!-- Continue adding more questions following the same structure -->
+    
+    <!-- Add this section at the end -->
+    <div class="question" id="question10">
+      <p>10. 6b. Right Leg</p>
+      <div class="options">
+        <div class="option"><input type="radio" name="q10" value="0"> No drift</div>
+        <div class="option"><input type="radio" name="q10" value="1"> Drift</div>
+        <div class="option"><input type="radio" name="q10" value="2"> Some effort against gravity</div>
+        <div class="option"><input type="radio" name="q10" value="3"> No effort against gravity</div>
+        <div class="option"><input type="radio" name="q10" value="4"> No movement</div>
+        <div class="option"><input type="radio" name="q10" value="5"> Amputation or fusion</div>
+      </div>
+      <div class="more-info">
+        <p>More Information:</p>
+        <p>The limb is placed in the appropriate position: hold the leg at 30 degrees (always tested supine). Drift is scored if the leg falls before 5 seconds. The aphasic patient is encouraged using urgency in the voice and pantomime, but not noxious stimulation. Each limb is tested in turn, beginning with the non-paretic leg. Only in the case of amputation or joint fusion at the hip, the examiner should record the score as untestable (UN), and clearly write the explanation for this choice.</p>
+      </div>
+      <span class="message" id="message1"></span>
+
+      <button id="backButton" onclick="prevQuestion()">Back</button>
+      <button id="nextButton" onclick="validateAnswer('q10')">Next</button>
+    </div>
+    
+      
+  <!-- Question 11 -->
+<div class="question" id="question11">
+    <p>11. 7. Limb Ataxia</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q11" value="0"> Absent</div>
+      <div class="option"><input type="radio" name="q11" value="1"> Present in one limb</div>
+      <div class="option"><input type="radio" name="q11" value="2"> Present in two limbs</div>
+      <div class="option"><input type="radio" name="q11" value="3"> Amputation or joint fusion</div>
+      <div class="option"><input type="radio" name="q11" value="4"> Paralyzed</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>This item is aimed at finding evidence of a unilateral cerebellar lesion. Test with eyes open. In case of visual defect, ensure testing is done in an intact visual field. The finger-nose-finger and heel-shin tests are performed on both sides, and ataxia is scored only if present out of proportion to weakness. Ataxia is absent in the patient who cannot understand or is paralyzed. Only in the case of amputation or joint fusion, the examiner should record the score as untestable (UN), and clearly write the explanation for this choice. In the case of blindness, test by having the patient touch the nose from the extended arm position.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q11')">Next</button>
+  </div>
+  
+  <!-- Question 12 -->
+  <div class="question" id="question12">
+    <p>12. 8. Sensory</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q12" value="0"> Normal; no sensory loss</div>
+      <div class="option"><input type="radio" name="q12" value="1"> Mild-to-moderate sensory loss</div>
+      <div class="option"><input type="radio" name="q12" value="2"> Severe to total sensory loss</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>Sensation or grimace to pinprick when tested, or withdrawal from noxious stimulus in the obtunded or aphasic patient. Only sensory loss attributed to a stroke is scored as abnormal, and the examiner should test as many body areas (arms [not hands], legs, trunk, face) as needed to accurately check for hemisensory loss. A score of 2, “severe or total sensory loss,” should only be given when a severe or total loss of sensation can be clearly demonstrated. Stuporous and aphasic patients will, therefore, probably score 1 or 0. The patient with a brainstem stroke who has bilateral loss of sensation is scored 2. If the patient does not respond and is quadriplegic, score 2. Patients in a coma (item 1a=3) are automatically given a 2 on this item.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q12')">Next</button>
+  </div>
+  
+  <!-- Question 13 -->
+  <div class="question" id="question13">
+    <p>13. 9. Best Language</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q13" value="0"> No aphasia; normal</div>
+      <div class="option"><input type="radio" name="q13" value="1"> Mild-to-moderate aphasia</div>
+      <div class="option"><input type="radio" name="q13" value="2"> Severe aphasia</div>
+      <div class="option"><input type="radio" name="q13" value="3"> Mute, global aphasia</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>A great deal of information about comprehension will be obtained during the preceding sections of the examination. For this scale item, the patient is asked to describe what is happening in the attached picture, to name the items on the attached naming sheet, and to read from the attached list of sentences. Comprehension is judged from responses here, as well as to all of the commands in the preceding general neurological exam. If visual loss interferes with the tests, ask the patient to identify objects placed in the hand, repeat, and produce speech. The intubated patient should be asked to write. The patient in a coma (item 1a=3) will automatically score 3 on this item. The examiner must choose a score for the patient with stupor or limited cooperation, but a score of 3 should be used only if the patient is mute and follows no one-step commands.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q13')">Next</button>
+  </div>
+  
+  <!-- Question 14 -->
+  <div class="question" id="question14">
+    <p>14. 10. Dysarthria</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q14" value="0"> Normal</div>
+      <div class="option"><input type="radio" name="q14" value="1"> Mild-to-moderate dysarthria</div>
+      <div class="option"><input type="radio" name="q14" value="2"> Severe dysarthria</div>
+      <div class="option"><input type="radio" name="q14" value="3"> Intubated or other physical barrier</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>If the patient is thought to be normal, an adequate sample of speech must be obtained by asking the patient to read or repeat words from the attached list. If the patient has severe aphasia, the clarity of articulation of spontaneous speech can be rated. Only if the patient is intubated or has other physical barriers to producing speech, the examiner should record the score as untestable (UN), and clearly write an explanation for this choice. Do not tell the patient why he or she is being tested.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q14')">Next</button>
+  </div>
+  
+  <!-- Question 15 -->
+  <div class="question" id="question15">
+    <p>15. 11. Extinction and Inattention (formerly Neglect)</p>
+    <div class="options">
+      <div class="option"><input type="radio" name="q15" value="0"> No abnormality</div>
+      <div class="option"><input type="radio" name="q15" value="1"> Visual, tactile, auditory, spatial, or personal inattention or extinction</div>
+      <div class="option"><input type="radio" name="q15" value="2"> Profound hemi-inattention or extinction to more than one modality</div>
+    </div>
+    <div class="more-info">
+      <p>More Information:</p>
+      <p>Sufficient information to identify neglect may be obtained during the prior testing. If the patient has severe visual loss preventing visual double simultaneous stimulation, and the cutaneous stimuli are normal, the score is normal. If the patient has aphasia but does appear to attend to both sides, the score is normal. The presence of visual spatial neglect or anosagnosia may also be taken as evidence of abnormality. Since the abnormality is scored only if present, the item is never untestable.</p>
+    </div>
+    <span class="message" id="message1"></span>
+
+    <button id="backButton" onclick="prevQuestion()">Back</button>
+    <button id="nextButton" onclick="validateAnswer('q15')">submit to see your score and continue</button>
+  </div>
+
+  <div id="result-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="result"></div>
+
+        <!-- Continue button initially hidden -->
+        <button id="continueButton" style="display: none;" onclick="continueAfterResult()">Continue</button>
+
+        <!-- Video frame initially hidden -->
+        <iframe id="instructionVideoFrame" width="560" height="315" src="" frameborder="0"
+            style="display: none;"></iframe>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

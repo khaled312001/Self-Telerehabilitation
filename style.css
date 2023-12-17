@@ -30,6 +30,16 @@ body {
   cursor: pointer;
 }
 
+#continueButton {
+  background-color: #00f13c;
+  color: white;
+  padding: 25px 50px;
+  border: none;
+  font-size: larger;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @keyframes gradientAnimation {
   0% {
       background-position: 0% 0%;
@@ -112,10 +122,11 @@ button:hover {
 }
 
 #result-modal {
+  text-align: center;
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
+ justify-content: center;
+ font-size: larger;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
@@ -126,9 +137,10 @@ button:hover {
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  border-radius: 10px;
+  border-radius: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 .close {
   color: #aaa;
@@ -146,6 +158,7 @@ button:hover {
   margin-bottom: 10px;
 }
 
+
 #continueButton {
   background-color: #4caf50;
   color: white;
@@ -155,10 +168,74 @@ button:hover {
   cursor: pointer;
 }
 
-#instructionVideo {
+
+/* Apply styles to the result container */
+#resultContainer {
   display: none;
-  width: 100%;
-  height: 100%;
   max-width: 800px;
   margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  margin: 10px;
+  padding: 10px;
 }
+
+#result {
+  
+  font-size: 30px;
+  font-weight: bolder;
+  color: #271818; /* Adjust text color as needed */
+}
+#condition {
+  
+  font-size: 30px;
+  font-weight: bold;
+  color: #e91a1a; /* Adjust text color as needed */
+}
+#Belt_Test {
+  text-align: center;
+  font-size: 40px;
+  margin-top: 10px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px; /* Add margin to create space between buttons */
+}
+#Buzzing_Wire_Test {
+  text-align: center;
+  font-size: 40px;
+  margin-top: 10px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px; /* Add margin to create space between buttons */
+}
+#start_test {
+  text-align: center;
+  font-size: 40px;
+  margin-top: 10px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px; /* Add margin to create space between buttons */
+}
+/* Apply styles to the video container */
+#videoContainer {
+  max-width: 800px;
+  margin: 20px ;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  padding: 10px;
+}
+

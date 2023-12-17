@@ -63,35 +63,70 @@ function nextQuestion() {
 function prevQuestion() {
   hideQuestion(currentQuestion);
   currentQuestion--;
-  if (currentQuestion > 0) {
+  if (currentQuestion >= 1) {
     showQuestion(currentQuestion);
+  } else {
+    calculateScore();
   }
 }
 
 function validateAnswer(questionName) {
   const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
-  if (selectedOption) {
-    const score = parseInt(selectedOption.value, 10);
-    totalScore += score;
-    nextQuestion();
-  } else {
-    alert('Please select an option before proceeding.');
+
+  // If no option is selected, automatically select the first option
+  if (!selectedOption) {
+    const options = document.querySelectorAll(`input[name="${questionName}"]`);
+    if (options.length > 0) {
+      options[0].checked = true;
+      selectedOption = options[0];
+    }
   }
+
+  const score = parseInt(selectedOption.value, 10);
+  totalScore += score;
+  nextQuestion();
+
+  
 }
 
 function calculateScore() {
-  // Show the result modal
-  const resultModal = document.getElementById('result-modal');
-  resultModal.style.display = 'block';
-
+    // Hide the survey container
+    const surveyContainer = document.getElementById('surveyContainer');
+    surveyContainer.style.display = 'none';
   // Display the total score
   const resultElement = document.getElementById('result');
-  resultElement.innerHTML = `<p>Your Total Score: ${totalScore}</p>`;
+  resultElement.innerHTML = `<h2>Your Total Score: ${totalScore}</h2>`;
+  const conditionElement = document.getElementById('condition');
+
+  if(totalScore<=5)
+  {
+    conditionElement.innerHTML = `<h2>Your Condition is Minor </h2>`;
+  
+  }
+  else if(totalScore>=6&&totalScore<=10)
+  {
+    conditionElement.innerHTML = `<h2>Your Condition is Mild </h2>`;
+  
+  }
+  else if(totalScore>=11&&totalScore<=15)
+  {
+    conditionElement.innerHTML = `<h2>Your Condition is Moderate </h2>`;
+  
+  }
+  else
+  conditionElement.innerHTML = `<h2>Sorry, this system is not suitable for you </h2>`;
+  // Show the result container
+  const resultContainer = document.getElementById('resultContainer');
+  resultContainer.style.display = 'block';
+
+  // Show the "Continue to Next Level" button
+  const Belt_TestButton = document.getElementById('Belt_Test');
+  Belt_TestButton.style.display = 'block';
+
+
 }
 
-function closeModal() {
-  document.getElementById('result-modal').style.display = 'none';
-}
+
 
 // Close the modal if the user clicks outside of it
 window.onclick = function(event) {
@@ -101,11 +136,80 @@ window.onclick = function(event) {
   }
 };
 function startSurvey() {
-    // Hide image container and show survey container
-    document.getElementById('imageContainer').style.display = 'none';
-    document.getElementById('surveyContainer').style.display = 'block';
-  }
-
-// Show the first question initially
+  // Hide image container and show survey container
+  document.getElementById('imageContainer').style.display = 'none';
+  document.getElementById('Belt_Test').style.display = 'none';
+  document.getElementById('surveyContainer').style.display = 'block';
+  // Show the first question initially
 console.log('Showing question 1');
 showQuestion(currentQuestion);
+}
+
+
+
+function showResult() {
+  // Display the total score
+  const resultElement = document.getElementById('result');
+  const conditionElement = document.getElementById('condition');
+
+  resultElement.innerHTML = `<h2>Your Total Score: ${totalScore}</h2>`;
+if(totalScore<=5)
+{
+  conditionElement.innerHTML = `<h2>Your Condition is Minor </h2>`;
+
+}
+else if(totalScore>=6&&totalScore<=10)
+{
+  conditionElement.innerHTML = `<h2>Your Condition is Mild </h2>`;
+
+}
+else if(totalScore>=11&&totalScore<=15)
+{
+  conditionElement.innerHTML = `<h2>Your Condition is Moderate </h2>`;
+
+}
+else
+conditionElement.innerHTML = `<h2>Sorry, this system is not suitable for you </h2>`;
+
+  // Show the result container
+  const resultContainer = document.getElementById('resultContainer');
+  resultContainer.style.display = 'block';
+
+  // Show the "Continue to Next Level" button
+  const Belt_TestButton = document.getElementById('Belt_Test');
+  Belt_TestButton.style.display = 'block';
+
+  // Hide the survey container
+  const surveyContainer = document.getElementById('surveyContainer');
+  surveyContainer.style.display = 'none';
+}
+
+function Belt_Test() {
+  window.location.href = 'belt_test.html';
+
+ 
+}
+function Buzzing_Wire_Test() {
+  window.location.href = 'buzzing wire_test.html';
+
+ 
+}
+function back() {
+  window.location.href = 'index.html';
+
+ 
+}
+function test1() {
+  window.location.href = 'test1.html';
+
+ 
+}
+function test2() {
+  window.location.href = 'test2.html';
+
+ 
+}
+
+const guide1 = document.getElementById('guide1');
+
+uide1.innerHTML = `<h3>Sorry, this system is not suitable for you </h3>`;

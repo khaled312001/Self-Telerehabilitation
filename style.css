@@ -7,7 +7,10 @@ body {
 }
 
 #imageContainer {
-  text-align: center;
+  max-width: 500px;
+
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #surveyContainer {
@@ -58,10 +61,18 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+#image{
+  width: 500px;
+  margin-bottom: 50px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 500px;
+
+}
 /* Media Query for Responsive View */
 @media only screen and (max-width: 600px), only screen and (max-height: 600px) {
   #surveyContainer,
-  #survey-container {
+    #survey-container {
       max-width: 100%;
       margin: 10px;
       padding: 10px;
@@ -173,14 +184,11 @@ button:hover {
 #resultContainer {
   display: none;
   max-width: 800px;
-  margin: 20px auto;
+  margin: 20px 20px;
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 100%;
-  margin: 10px;
-  padding: 10px;
 }
 
 #result {
@@ -230,12 +238,11 @@ button:hover {
 }
 /* Apply styles to the video container */
 #videoContainer {
+  display: none;
   max-width: 800px;
-  margin: 20px ;
+  margin: 20px auto;
   background-color: #fff;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  padding: 10px;
 }
-

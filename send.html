@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sending</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        // Function to send data to ThingSpeak
+        function sendDataToThingSpeak(value) {
+            // Replace YOUR_API_KEY with your ThingSpeak Write API Key
+            var apiKey = "H2YD9PEQ87IRWQV6";
+
+            // Replace CHANNEL_ID with your ThingSpeak Channel ID
+            var channelID = "2383735";
+
+            // ThingSpeak API URL
+            var apiUrl = "https://api.thingspeak.com/update.json";
+
+            // Create data object
+            var data = {
+                api_key: apiKey,
+                field1: value
+            };
+
+            // Send data to ThingSpeak
+            $.ajax({
+                type: "POST",
+                url: apiUrl + "?api_key=" + apiKey,
+                data: data,
+                success: function (response) {
+                    console.log("Data sent to ThingSpeak successfully");
+                },
+                error: function (error) {
+                    console.error("Error sending data to ThingSpeak:", error);
+                }
+            });
+        }
+
+        // Function to auto-refresh the iframe every 1 second
+        function autoRefresh() {
+            var iframe = document.getElementById("thingSpeakWidget");
+            iframe.src = iframe.src; // Refresh the iframe by setting its source again
+        }
+
+        // Set the auto-refresh interval to 1 second
+        setInterval(autoRefresh, 500); // Refresh every 1 second
+    </script>
+</head>
+
+<body onload="result()">
+    <center>
+        <br><br><br><br><br><br><br><br><br><br>
+        <div id="Container" class="video">
+
+            <h3 id="angle">Inclination Angle = </h3>
+
+            <!-- Input field for user to enter data -->
+            <input type="text" id="inputField" placeholder="Enter Value">
+
+            <!-- Button to trigger data sending -->
+            <button onclick="sendDataToThingSpeak(document.getElementById('inputField').value)">Send Data</button>
+
+            <iframe id="thingSpeakWidget" width="auto" height="260"
+                style="border: 1px solid #cccccc;background-color: transparent;"
+                src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
+            <br><br>
+            <p id="result" style="display: none;"></p>
+            <br><br>
+
+            <button onclick="back()" id="start_test">Back </button>
+
+        </div>
+    </center>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

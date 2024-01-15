@@ -9,6 +9,7 @@ let scoreRight = 0;
 
 // ... (rest of your code)
 
+
 function startSurvey() {
   document.getElementById('imageContainer').style.display = 'none';
   document.getElementById('surveyContainer').style.display = 'block';
@@ -275,6 +276,8 @@ function showImage()
 
   }
   result();
+
+  
   
 }
 // ... (rest of your code)
@@ -452,3 +455,11 @@ function incrementScore() {
 setInterval(updateAngle, 1000);
 
 updateAngle();
+
+
+
+
+
+
+// ... (your existing code)
+

@@ -26,12 +26,7 @@ function backs() {
     window.location.href = 'index.html';
   }
 }
-function back2(){
-  localStorage.clear();
 
-  window.location.href = 'index.html';
-
-}
 
 function checkAndRedirect() {
   let surveyCompleted = localStorage.getItem('surveyCompleted');
@@ -55,7 +50,21 @@ function result() {
   performDirection(conditions[0], conditions.slice(1));
 }
 
+function performDirection(direction, remainingDirections) {
+  const targetTilt = getTargetTiltForDirection(direction);
+  
+  // Display instructions and target angles for the current direction
+  document.getElementById('exercises').innerHTML = `
+    <h2>Focus on the point and lean your body in ${direction.toLowerCase()} direction</h2>
+    <ul>
+      <li>${targetTilt} of ${direction} target angle: ${getTargetRangeForDirection(direction).join(':')} degrees</li>
+    </ul>
+    <p>Score for ${direction}: ${getScoreDisplay(0, targetTilt)}</p>
+  `;
 
+  // Wait for the user to achieve the target before moving to the next direction
+  waitForAchievement(direction, remainingDirections);
+}
 
 function waitForAchievement(direction, remainingDirections) {
   let intervalId;
@@ -312,7 +321,7 @@ function performExercises(count, targetTilts) {
   // Display the achieved score for each direction
   const conditions = ['Anterior', 'Posterior', 'Left', 'Right'];
   conditions.forEach((direction, index) => {
-    const achievedScore = getAchievedScore(lastUpdatedAngle, eval(`${direction.toLowerCase()}Target`), targetTilts[index], getCondition(totalScore));
+    let achievedScore = getAchievedScore(lastUpdatedAngle, eval(`${direction.toLowerCase()}Target`), targetTilts[index], getCondition(totalScore));
     exercisesElement.innerHTML += `<p>Score for ${direction}: ${achievedScore}</p>`;
 
   });
@@ -321,6 +330,10 @@ function performExercises(count, targetTilts) {
 
 
 
+function getScoreDisplay(score, targetTilt) {
+  
+  return score > 0 ? `Achieved (${score} / ${targetTilt})` : `Not Achieved`;
+}
 
 function getCondition(score) {
   if (score <= 5) {
@@ -346,7 +359,7 @@ function getAchievedScore(angle, targetRange, targetTilt, condition) {
 
   if (isAchieved) {
     // If achieved, set score to 1 (or any other value as needed)
-    score += 1;
+    score = 1;
     return `Achieved (${score} / ${targetTilt})`;
   } else {
     // If not achieved, set score to 0
@@ -354,8 +367,6 @@ function getAchievedScore(angle, targetRange, targetTilt, condition) {
     return `Not Achieved (${score} / ${targetTilt})`;
   }
 }
-
-
 
 function calculateAchievedRange(targetRange, condition) {
   // Calculate the achieved range based on the condition
@@ -394,6 +405,63 @@ let hasAchievedTarget = false;
 
 // ... (previous code)
 
+async function updateAngle() {
+  try {
+    // Fetch data from ThingSpeak API
+    const response = await fetch('https://api.thingspeak.com/channels/2383735/fields/1.json?results=1');
+    const data = await response.json();
+
+    // Extract the angle value from the response and parse it as an integer
+    const newAngle = parseInt(data.feeds[0].field1);
+
+    // Display instruction when angle is 0
+    if (newAngle === 0) {
+      document.getElementById('exercises').innerHTML = `
+        <h2>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h2>
+        <h2>Perform the following exercises:</h2>
+        <ul>
+          <li>8 of Anterior target angle: 25:30 degrees</li>
+          <li>6 of Posterior target angle: 16:21 degrees</li>
+          <li>10 of Left target angle: 21:26 degrees</li>
+          <li>10 of Right target angle: 21:26 degrees</li>
+        </ul>
+        <p>Score for Anterior: ${getScoreDisplay(scoreAnterior, 8)}</p>
+        <p>Score for Posterior: ${getScoreDisplay(scorePosterior, 6)}</p>
+        <p>Score for Left: ${getScoreDisplay(scoreLeft, 10)}</p>
+        <p>Score for Right: ${getScoreDisplay(scoreRight, 10)}</p>
+      `;
+    }
+
+    // Check if the angle has returned to zero
+    if (lastUpdatedAngle > 0 && newAngle === 0) {
+      isWaitingForZero = true;
+      hasAchievedTarget = false; // Reset the flag when the angle returns to zero
+    }
+
+    if (isWaitingForZero && newAngle !== 0) {
+      // Check if the angle achieves the target
+      const direction = getDirectionBasedOnAngle(newAngle); // Implement your logic to determine the direction based on the angle
+      const targetTilt = calculateDynamicTargetTilt(direction, getCondition(totalScore));
+
+      if (newAngle === targetTilt) {
+        hasAchievedTarget = true;
+      }
+    }
+
+    if (isWaitingForZero && hasAchievedTarget && newAngle === 0) {
+      incrementScore(); // Increment the score when the angle achieves the target
+      isWaitingForZero = false; // Reset the flag
+      hasAchievedTarget = false; // Reset the flag
+    }
+
+    // Update the current angle value
+    lastUpdatedAngle = newAngle;
+
+    // Dynamically update progress targets based on the current condition
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 
 // ... (rest of the code)
 
@@ -408,117 +476,131 @@ updateAngle();
 
 
 
-
-let maxAttempts ; // Change this value as needed
-let retryCooldown = 2; // Number of days to wait for a retry
-let currentDate ;
+var maxAttempts; // Change this value as needed
+var retryCooldown = 2; // Number of days to wait for a retry
+var currentDate;
 
 function checkAttempts() {
   let attemptsInput = document.getElementById('attemptsInput').value;
   let totalScore = parseInt(localStorage.getItem('totalScore'), 10);
 
-    if (totalScore <= 5) {
-      maxAttempts = 5;
-    } else if (totalScore >= 6 && totalScore <= 10) {
-      maxAttempts = 7;
-    } else if (totalScore >= 11 && totalScore <= 15) {
-      maxAttempts = 9;
-    } else {
-      // Handle the case where totalScore is out of the expected range
-      console.error('Invalid totalScore:', totalScore);
-      return;
-    }
+  if (totalScore <= 5) {
+    maxAttempts = 5;
+  } else if (totalScore >= 6 && totalScore <= 10) {
+    maxAttempts = 7;
+  } else if (totalScore >= 11 && totalScore <= 15) {
+    maxAttempts = 9;
+  }
 
-    if (attemptsInput <= maxAttempts) {
-      let condition = document.getElementById('condition').innerText;
+  let condition = document.getElementById('condition').innerText;
+  if (attemptsInput <= maxAttempts) {
+    let retryDate = new Date(currentDate);
 
-      let retryDate = new Date(currentDate);
-      retryDate.setDate(currentDate.getDate() + retryCooldown);
 
-      // Save retry date, start time, and test number in local storage
-      localStorage.setItem('retryDate', retryDate.toISOString());
-      localStorage.setItem('startTime', new Date().toISOString());
-      localStorage.setItem('testNumber', 1); // Replace 1 with your logic to get the current test number
-
-      // Store timer data
-      localStorage.setItem('timerEndDate', retryDate.getTime());
-
-      // Hide the images and show the countdown
-      document.getElementById('imageMinor').style.display = 'none';
-      document.getElementById('imageMild').style.display = 'none';
-      document.getElementById('imageModerate').style.display = 'none';
-      document.getElementById('try').style.display = 'none';
-      document.getElementById('enter').style.display = 'none';
-      document.getElementById('countdown').style.display = 'block';
-
-      // Start or resume the countdown timer
-      startCountdown(retryDate);
+    document.getElementById('countdown').style.display = 'block';
+    startCountdown(retryDate);
+    document.getElementById('imageMinor').style.display = 'none';
+    document.getElementById('imageMild').style.display = 'none';
+    document.getElementById('imageModerate').style.display = 'none';
+    document.getElementById('try').style.display = 'none';
+    document.getElementById('enter').style.display = 'none';
+  
   } else {
     document.getElementById('countdown').style.display = 'none';
+showImages();
     displayTestNumber();
+  }
 }
 
-}
 document.addEventListener('DOMContentLoaded', function () {
+  currentDate = new Date(); // Set the current date when the document is loaded
+
   // Check for stored timer data
   let storedTimerEndDate = localStorage.getItem('timerEndDate');
 
   if (storedTimerEndDate) {
-      let retryDate = new Date(parseInt(storedTimerEndDate, 10));
+    let retryDate = new Date(parseInt(storedTimerEndDate, 10));
 
-      if (retryDate > new Date()) {
-          // If the retry date is in the future, show the countdown
-          document.getElementById('countdown').style.display = 'block';
-          startCountdown(retryDate);
-      } else {
-          // If the retry date has passed, show the images, input box, and send button
-          showImages();
-      }
-  } else {
-      // If there's no stored timer data, show the images, input box, and send button
+    if (retryDate > new Date()) {
+      // If the retry date is in the future, show the countdown
+      document.getElementById('countdown').style.display = 'block';
+      startCountdown(retryDate);
+      
+    } else {
+      // If the retry date has passed, show the images, input box, and send button
       showImages();
+    }
+  } else {
+    // If there's no stored timer data, show the images, input box, and send button
+    showImages();
   }
 });
 
 function startCountdown(endDate) {
-    let timerElement = document.getElementById('timer');
+  let timerElement = document.getElementById('timer');
 
-    function updateTimer() {
-        let now = new Date();
-        let timeDifference = endDate - now;
+  function updateTimer() {
+    let now = new Date();
+    let timeDifference = endDate - now;
 
-        if (timeDifference <= 0) {
-            // Show the images and hide the countdown when the timer is done
-            document.getElementById('imageMinor').style.display = 'block';
-            document.getElementById('imageMild').style.display = 'block';
-            document.getElementById('imageModerate').style.display = 'block';
-            document.getElementById('countdown').style.display = 'none';
-            clearInterval(timerInterval);
-        } else {
-            let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-            let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    if (timeDifference <= 0) {
+      // Show the images when the countdown is done
+      showImages();
+      clearInterval(timerInterval); // Stop the timer interval
+      localStorage.removeItem('timerEndDate'); // Remove stored timer data
+    } else {
+      // Update the countdown
+      let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-            timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }
+      timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      localStorage.setItem('timerEndDate', endDate.getTime()); // Store countdown end date
+      displayTestNumber()
     }
+  }
 
+  // Update the timer only when needed, i.e., when the retry date is in the future
+  if (endDate > new Date()) {
     // Update the timer every second
     let timerInterval = setInterval(updateTimer, 1000);
 
     // Initial update
     updateTimer();
+  }
 }
 
+// ... (the rest of your code remains unchanged)
+
+// ... (the rest of your code remains unchanged)
+
+// Display the retry date
+function displayRetryDate(retryDate) {
+  let retryDateDisplay = document.getElementById('retryDateDisplay');
+  let options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short'
+  };
+  let formattedRetryDate = retryDate.toLocaleDateString('en-US', options);
+
+  retryDateDisplay.innerHTML = `Retry Available on: ${formattedRetryDate}`;
+}
 
 function showImages() {
   let totalScore = parseInt(localStorage.getItem('totalScore'), 10);
-  let maxAttempts;
 
   // Hide all images by default
+  document.getElementById('imageMinor').style.display = 'none';
   document.getElementById('imageMild').style.display = 'none';
   document.getElementById('imageModerate').style.display = 'none';
+
   if (totalScore <= 5) {
     document.getElementById('imageMinor').style.display = 'block';
   } else if (totalScore >= 6 && totalScore <= 10) {
@@ -529,21 +611,29 @@ function showImages() {
 
   document.getElementById('try').style.display = 'block';
   document.getElementById('enter').style.display = 'block';
+
   let retryDate = new Date(localStorage.getItem('retryDate'));
+
   if (retryDate <= new Date()) {
-      // If the retry date has passed, show the input box and send button
-      document.getElementById('enter').style.display = 'block';
+    // If the retry date has passed, show the input box and send button
+    document.getElementById('enter').style.display = 'block';
   }
   checkAttempts();
-result();
+  result();
 }
 
 document.getElementById('Buzzing_Wire_Test').addEventListener('click', function () {
   checkAttempts();
-  
 });
 
+// ... (the rest of your code remains unchanged)
 
+// In your code, make sure to call startCountdown with the correct end date when necessary, such as after a user submits an attempt or when starting a new attempt.
+
+// For example, after a user successfully submits an attempt:
+// let retryDate = new Date();
+// retryDate.setDate(retryDate.getDate() + retryCooldown);
+// startCountdown(retryDate);
 
 
 
@@ -560,23 +650,25 @@ function displayTestNumber() {
 
 
 
+
+
+
+
+
+
+
+// Function to send data to ThingSpeak
 function sendDataToThingSpeak(value) {
-  // Replace YOUR_API_KEY with your ThingSpeak Write API Key
   var apiKey = "H2YD9PEQ87IRWQV6";
-
-  // Replace CHANNEL_ID with your ThingSpeak Channel ID
   var channelID = "2383735";
-
-  // ThingSpeak API URL
   var apiUrl = "https://api.thingspeak.com/update.json";
+  currentAngle = parseFloat(value);
 
-  // Create data object
   var data = {
       api_key: apiKey,
       field1: value
   };
 
-  // Send data to ThingSpeak
   $.ajax({
       type: "POST",
       url: apiUrl + "?api_key=" + apiKey,
@@ -590,14 +682,66 @@ function sendDataToThingSpeak(value) {
   });
 }
 
-// Function to auto-refresh the iframe every 1 second
-  function autoRefresh() {
+// Function to auto-refresh the iframe every 30 seconds
+function autoRefresh() {
   var iframe = document.getElementById("thingSpeakWidget");
-  var box = document.getElementById("exercises");
-  box.src=box.src;
-  iframe.src = iframe.src; // Refresh the iframe by setting its source again
+  iframe.src = iframe.src;
+ 
+}
 
+// Set the auto-refresh interval
+setInterval(autoRefresh, 30000);
+
+// Function to update the position of the red circle based on the direction and angle
+function updateCirclePosition(angle, direction) {
+  var circle = document.getElementById("redCircle");
+  var radius = 50;
+
+  // Define target angles for each direction
+  var targetAngles = {
+    'Anterior': { min: 25, max: 30 },
+    'Posterior': { min: 16, max: 21 },
+    'Left': { min: 21, max: 26 },
+    'Right': { min: 21, max: 26 }
+  };
+
+  // Calculate the new position based on the angle and direction
+
+  // Update the circle's position
+  circle.setAttribute("cx", newX);
+  circle.setAttribute("cy", newY);
+
+  // Check if the angle is within the target range for the current direction
+
+  // Move the red circle based on the direction
+  if (isWithinTargetRange) {
+    switch (direction) {
+      case 'Anterior':
+        // Move the red circle to the top of the blue circle
+        circle.setAttribute("cy", 0);
+        break;
+      case 'Posterior':
+        // Move the red circle to the bottom of the blue circle
+        circle.setAttribute("cy", 0);
+        break;
+      case 'Left':
+        // Move the red circle to the left of the blue circle
+        circle.setAttribute("cx", 0);
+        break;
+      case 'Right':
+        // Move the red circle to the right of the blue circle
+        circle.setAttribute("cx", 100);
+        break;
+    }
   }
+}
 
-// Set the auto-refresh interval to 1 second
-setInterval(autoRefresh, 500); // Refresh every 1 second
+// Function to handle button click
+function addButtonClick() {
+  var inputValue = document.getElementById("inputField").value;
+  sendDataToThingSpeak(inputValue);
+}
+
+// Function to handle the back button click
+
+// Function to handle the initial result

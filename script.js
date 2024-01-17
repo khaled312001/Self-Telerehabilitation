@@ -8,13 +8,43 @@ let scoreLeft = 0;
 let scoreRight = 0;
 
 // ... (rest of your code)
+let surveyCompleted = localStorage.getItem('surveyCompleted');
+
+function backs() {
+  let surveyCompleted = localStorage.getItem('surveyCompleted');
+
+  // Check if the survey has been completed
+  if (surveyCompleted === 'false') {
+    // Survey has already been completed, do not reset variables or redirect
+    return;
+  } else {
+    // Remove relevant items from localStorage
+    localStorage.clear();
 
 
-function startSurvey() {
-  document.getElementById('imageContainer').style.display = 'none';
-  document.getElementById('surveyContainer').style.display = 'block';
-  showQuestion(currentQuestion);
+    // Redirect to index.html
+    window.location.href = 'index.html';
+  }
 }
+function back2(){
+  localStorage.clear();
+
+  window.location.href = 'index.html';
+
+}
+
+function checkAndRedirect() {
+  let surveyCompleted = localStorage.getItem('surveyCompleted');
+
+  // Check if the survey has been completed
+  if (surveyCompleted === 'true') {
+    // Survey has already been completed, redirect to result.html
+    window.location.href = 'result.html';
+  }
+}
+
+// Call checkAndRedirect at the appropriate place in your code
+// For example, you can call it in the startSurvey function
 
 function result() {
   // ... (previous code)
@@ -25,21 +55,7 @@ function result() {
   performDirection(conditions[0], conditions.slice(1));
 }
 
-function performDirection(direction, remainingDirections) {
-  const targetTilt = getTargetTiltForDirection(direction);
-  
-  // Display instructions and target angles for the current direction
-  document.getElementById('exercises').innerHTML = `
-    <h2>Focus on the point and lean your body in ${direction.toLowerCase()} direction</h2>
-    <ul>
-      <li>${targetTilt} of ${direction} target angle: ${getTargetRangeForDirection(direction).join(':')} degrees</li>
-    </ul>
-    <p>Score for ${direction}: ${getScoreDisplay(0, targetTilt)}</p>
-  `;
 
-  // Wait for the user to achieve the target before moving to the next direction
-  waitForAchievement(direction, remainingDirections);
-}
 
 function waitForAchievement(direction, remainingDirections) {
   let intervalId;
@@ -59,6 +75,7 @@ function waitForAchievement(direction, remainingDirections) {
       } else {
         // All directions completed, calculate the final result
         calculateScore();
+
       }
     }
   }
@@ -143,26 +160,21 @@ function updateButtons() {
     backButton.style.display = 'none';
     nextButton.style.display = 'block';
     nextButton.innerHTML = 'Next';
-  } else if (currentQuestion === finalQuestion) {
+  }
+
+  else if (currentQuestion === finalQuestion) {
     backButton.style.display = 'block';
     nextButton.style.display = 'block';
     nextButton.innerHTML = 'Submit';
-  } else {
+  } 
+  
+  else {
     backButton.style.display = 'block';
     nextButton.style.display = 'block';
     nextButton.innerHTML = 'Next';
   }
 }
 
-function nextQuestion() {
-  hideQuestion(currentQuestion);
-  currentQuestion++;
-  if (currentQuestion <= 15) {
-    showQuestion(currentQuestion);
-  } else {
-    calculateScore();
-  }
-}
 
 function prevQuestion() {
   hideQuestion(currentQuestion);
@@ -173,7 +185,6 @@ function prevQuestion() {
     calculateScore();
   }
 }
-
 function validateAnswer(questionName) {
   let selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
 
@@ -191,7 +202,7 @@ function validateAnswer(questionName) {
   nextQuestion();
 }
 
-function calculateScore() {
+function calculateScore(callback) {
   // Hide the survey container
   const surveyContainer = document.getElementById('surveyContainer');
   surveyContainer.style.display = 'none';
@@ -199,16 +210,39 @@ function calculateScore() {
   // Store totalScore in localStorage
   localStorage.setItem('totalScore', totalScore);
 
-  // Redirect to the result page
-  window.location.href = 'result.html';
+  // Call the callback function (in this case, redirecting to result.html)
+  if (typeof callback === 'function') {
+    callback();
+  }
 }
 
 function startSurvey() {
-  
-  // Hide image container and show survey container
-  document.getElementById('imageContainer').style.display = 'none';
-  document.getElementById('surveyContainer').style.display = 'block';
-  showQuestion(currentQuestion);
+  let surveyCompleted = localStorage.getItem('surveyCompleted');
+
+  if (surveyCompleted === 'true') {
+    // Survey has already been completed, redirect to result.html
+    window.location.href = 'result.html';
+  } else {
+    document.getElementById('imageContainer').style.display = 'none';
+    document.getElementById('surveyContainer').style.display = 'block';
+    showQuestion(currentQuestion);
+  }
+}
+
+// In the function where you calculate the score (e.g., nextQuestion or prevQuestion), use calculateScore with a callback
+function nextQuestion() {
+  hideQuestion(currentQuestion);
+  currentQuestion++;
+
+  if (currentQuestion <= 15) {
+    showQuestion(currentQuestion);
+  } else {
+    // Set survey completion status and redirect to result.html
+    localStorage.setItem('surveyCompleted', 'true');
+    calculateScore(function() {
+      window.location.href = 'result.html';
+    });
+  }
 }
 
 // ... (previous code)
@@ -256,30 +290,7 @@ function result() {
 
 
 }
-function showImage()
-{
-  document.getElementById('imageMinor').style.display = 'none';
-  document.getElementById('imageMild').style.display = 'none';
-  document.getElementById('imageModerate').style.display = 'none';
-  const not = document.getElementById('not');
 
-
-  let condition;
-  if (totalScore <= 5) {
-    document.getElementById('imageMinor').style.display = 'block';
-  } else if (totalScore >= 6 && totalScore <= 10) {
-    document.getElementById('imageMild').style.display = 'block';
-  } else if (totalScore >= 11 && totalScore <= 15) {
-    document.getElementById('imageModerate').style.display = 'block';
-  } else {
-    not.innerHTML = `<h2>Sorry, this system is not suitable for you</h2>`;
-
-  }
-  result();
-
-  
-  
-}
 // ... (rest of your code)
 
 function performExercises(count, targetTilts) {
@@ -310,10 +321,6 @@ function performExercises(count, targetTilts) {
 
 
 
-function getScoreDisplay(score, targetTilt) {
-  
-  return score > 0 ? `Achieved (${score} / ${targetTilt})` : `Not Achieved`;
-}
 
 function getCondition(score) {
   if (score <= 5) {
@@ -339,7 +346,7 @@ function getAchievedScore(angle, targetRange, targetTilt, condition) {
 
   if (isAchieved) {
     // If achieved, set score to 1 (or any other value as needed)
-    score = 1;
+    score += 1;
     return `Achieved (${score} / ${targetTilt})`;
   } else {
     // If not achieved, set score to 0
@@ -347,6 +354,8 @@ function getAchievedScore(angle, targetRange, targetTilt, condition) {
     return `Not Achieved (${score} / ${targetTilt})`;
   }
 }
+
+
 
 function calculateAchievedRange(targetRange, condition) {
   // Calculate the achieved range based on the condition
@@ -368,9 +377,6 @@ function back() {
   window.location.href = 'result.html';
 }
 
-function backs() {
-  window.location.href = 'index.html';
-}
 
 function test1() {
   
@@ -388,63 +394,6 @@ let hasAchievedTarget = false;
 
 // ... (previous code)
 
-async function updateAngle() {
-  try {
-    // Fetch data from ThingSpeak API
-    const response = await fetch('https://api.thingspeak.com/channels/2383735/fields/1.json?results=1');
-    const data = await response.json();
-
-    // Extract the angle value from the response and parse it as an integer
-    const newAngle = parseInt(data.feeds[0].field1);
-
-    // Display instruction when angle is 0
-    if (newAngle === 0) {
-      document.getElementById('exercises').innerHTML = `
-        <h2>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h2>
-        <h2>Perform the following exercises:</h2>
-        <ul>
-          <li>8 of Anterior target angle: 25:30 degrees</li>
-          <li>6 of Posterior target angle: 16:21 degrees</li>
-          <li>10 of Left target angle: 21:26 degrees</li>
-          <li>10 of Right target angle: 21:26 degrees</li>
-        </ul>
-        <p>Score for Anterior: ${getScoreDisplay(scoreAnterior, 8)}</p>
-        <p>Score for Posterior: ${getScoreDisplay(scorePosterior, 6)}</p>
-        <p>Score for Left: ${getScoreDisplay(scoreLeft, 10)}</p>
-        <p>Score for Right: ${getScoreDisplay(scoreRight, 10)}</p>
-      `;
-    }
-
-    // Check if the angle has returned to zero
-    if (lastUpdatedAngle > 0 && newAngle === 0) {
-      isWaitingForZero = true;
-      hasAchievedTarget = false; // Reset the flag when the angle returns to zero
-    }
-
-    if (isWaitingForZero && newAngle !== 0) {
-      // Check if the angle achieves the target
-      const direction = getDirectionBasedOnAngle(newAngle); // Implement your logic to determine the direction based on the angle
-      const targetTilt = calculateDynamicTargetTilt(direction, getCondition(totalScore));
-
-      if (newAngle === targetTilt) {
-        hasAchievedTarget = true;
-      }
-    }
-
-    if (isWaitingForZero && hasAchievedTarget && newAngle === 0) {
-      incrementScore(); // Increment the score when the angle achieves the target
-      isWaitingForZero = false; // Reset the flag
-      hasAchievedTarget = false; // Reset the flag
-    }
-
-    // Update the current angle value
-    lastUpdatedAngle = newAngle;
-
-    // Dynamically update progress targets based on the current condition
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-}
 
 // ... (rest of the code)
 
@@ -460,6 +409,195 @@ updateAngle();
 
 
 
+let maxAttempts ; // Change this value as needed
+let retryCooldown = 2; // Number of days to wait for a retry
+let currentDate ;
 
-// ... (your existing code)
+function checkAttempts() {
+  let attemptsInput = document.getElementById('attemptsInput').value;
+  let totalScore = parseInt(localStorage.getItem('totalScore'), 10);
 
+    if (totalScore <= 5) {
+      maxAttempts = 5;
+    } else if (totalScore >= 6 && totalScore <= 10) {
+      maxAttempts = 7;
+    } else if (totalScore >= 11 && totalScore <= 15) {
+      maxAttempts = 9;
+    } else {
+      // Handle the case where totalScore is out of the expected range
+      console.error('Invalid totalScore:', totalScore);
+      return;
+    }
+
+    if (attemptsInput <= maxAttempts) {
+      let condition = document.getElementById('condition').innerText;
+
+      let retryDate = new Date(currentDate);
+      retryDate.setDate(currentDate.getDate() + retryCooldown);
+
+      // Save retry date, start time, and test number in local storage
+      localStorage.setItem('retryDate', retryDate.toISOString());
+      localStorage.setItem('startTime', new Date().toISOString());
+      localStorage.setItem('testNumber', 1); // Replace 1 with your logic to get the current test number
+
+      // Store timer data
+      localStorage.setItem('timerEndDate', retryDate.getTime());
+
+      // Hide the images and show the countdown
+      document.getElementById('imageMinor').style.display = 'none';
+      document.getElementById('imageMild').style.display = 'none';
+      document.getElementById('imageModerate').style.display = 'none';
+      document.getElementById('try').style.display = 'none';
+      document.getElementById('enter').style.display = 'none';
+      document.getElementById('countdown').style.display = 'block';
+
+      // Start or resume the countdown timer
+      startCountdown(retryDate);
+  } else {
+    document.getElementById('countdown').style.display = 'none';
+    displayTestNumber();
+}
+
+}
+document.addEventListener('DOMContentLoaded', function () {
+  // Check for stored timer data
+  let storedTimerEndDate = localStorage.getItem('timerEndDate');
+
+  if (storedTimerEndDate) {
+      let retryDate = new Date(parseInt(storedTimerEndDate, 10));
+
+      if (retryDate > new Date()) {
+          // If the retry date is in the future, show the countdown
+          document.getElementById('countdown').style.display = 'block';
+          startCountdown(retryDate);
+      } else {
+          // If the retry date has passed, show the images, input box, and send button
+          showImages();
+      }
+  } else {
+      // If there's no stored timer data, show the images, input box, and send button
+      showImages();
+  }
+});
+
+function startCountdown(endDate) {
+    let timerElement = document.getElementById('timer');
+
+    function updateTimer() {
+        let now = new Date();
+        let timeDifference = endDate - now;
+
+        if (timeDifference <= 0) {
+            // Show the images and hide the countdown when the timer is done
+            document.getElementById('imageMinor').style.display = 'block';
+            document.getElementById('imageMild').style.display = 'block';
+            document.getElementById('imageModerate').style.display = 'block';
+            document.getElementById('countdown').style.display = 'none';
+            clearInterval(timerInterval);
+        } else {
+            let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    }
+
+    // Update the timer every second
+    let timerInterval = setInterval(updateTimer, 1000);
+
+    // Initial update
+    updateTimer();
+}
+
+
+function showImages() {
+  let totalScore = parseInt(localStorage.getItem('totalScore'), 10);
+  let maxAttempts;
+
+  // Hide all images by default
+  document.getElementById('imageMild').style.display = 'none';
+  document.getElementById('imageModerate').style.display = 'none';
+  if (totalScore <= 5) {
+    document.getElementById('imageMinor').style.display = 'block';
+  } else if (totalScore >= 6 && totalScore <= 10) {
+    document.getElementById('imageMild').style.display = 'block';
+  } else if (totalScore >= 11 && totalScore <= 15) {
+    document.getElementById('imageModerate').style.display = 'block';
+  }
+
+  document.getElementById('try').style.display = 'block';
+  document.getElementById('enter').style.display = 'block';
+  let retryDate = new Date(localStorage.getItem('retryDate'));
+  if (retryDate <= new Date()) {
+      // If the retry date has passed, show the input box and send button
+      document.getElementById('enter').style.display = 'block';
+  }
+  checkAttempts();
+result();
+}
+
+document.getElementById('Buzzing_Wire_Test').addEventListener('click', function () {
+  checkAttempts();
+  
+});
+
+
+
+
+
+
+
+// Display the test number
+function displayTestNumber() {
+  let testNumberDisplay = document.getElementById('test_number');
+  // You may need to fetch the current test number from somewhere or calculate it based on completed tests
+  let currentTestNumber = 1; // Replace with your logic to get the current test number
+
+  testNumberDisplay.innerHTML = `The test number is: ${currentTestNumber}/18`;
+}
+
+
+
+function sendDataToThingSpeak(value) {
+  // Replace YOUR_API_KEY with your ThingSpeak Write API Key
+  var apiKey = "H2YD9PEQ87IRWQV6";
+
+  // Replace CHANNEL_ID with your ThingSpeak Channel ID
+  var channelID = "2383735";
+
+  // ThingSpeak API URL
+  var apiUrl = "https://api.thingspeak.com/update.json";
+
+  // Create data object
+  var data = {
+      api_key: apiKey,
+      field1: value
+  };
+
+  // Send data to ThingSpeak
+  $.ajax({
+      type: "POST",
+      url: apiUrl + "?api_key=" + apiKey,
+      data: data,
+      success: function (response) {
+          console.log("Data sent to ThingSpeak successfully");
+      },
+      error: function (error) {
+          console.error("Error sending data to ThingSpeak:", error);
+      }
+  });
+}
+
+// Function to auto-refresh the iframe every 1 second
+  function autoRefresh() {
+  var iframe = document.getElementById("thingSpeakWidget");
+  var box = document.getElementById("exercises");
+  box.src=box.src;
+  iframe.src = iframe.src; // Refresh the iframe by setting its source again
+
+  }
+
+// Set the auto-refresh interval to 1 second
+setInterval(autoRefresh, 500); // Refresh every 1 second

@@ -7,58 +7,50 @@
     <title>Tilting Test</title>
     <link rel="stylesheet" href="style.css">
 
+    <style>
+        #circleContainer {
+            padding: 10px;
+            margin: 10px;
+            position: relative;
+            text-align: center;
+        }
+
+        .direction-label {
+            color: black;
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            transform-origin: 50% 50%;
+        }
+
+        #anterior-label {
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #posterior-label {
+            bottom: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #left-label {
+            top: 50%;
+            left: 20%;
+            transform: translateY(-50%);
+        }
+
+        #right-label {
+            top: 50%;
+            right: 20%;
+            transform: translateY(-50%);
+        }
+    </style>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
   
-    <script>
-      // Function to send data to ThingSpeak
-      function sendDataToThingSpeak(value) {
-        // Replace YOUR_API_KEY with your ThingSpeak Write API Key
-        var apiKey = "H2YD9PEQ87IRWQV6";
-        
-        // Replace CHANNEL_ID with your ThingSpeak Channel ID
-        var channelID = "2383735";
-        
-        // ThingSpeak API URL
-        var apiUrl = "https://api.thingspeak.com/update.json";
-        
-        // Create data object
-        var data = {
-          api_key: apiKey,
-          field1: value
-        };
-  
-        // Send data to ThingSpeak
-        $.ajax({
-          type: "POST",
-          url: apiUrl + "?api_key=" + apiKey,
-          data: data,
-          success: function(response) {
-            console.log("Data sent to ThingSpeak successfully");
-          },
-          error: function(error) {
-            console.error("Error sending data to ThingSpeak:", error);
-          }
-        });
-      }
-  
-      // Function to handle button click
-      function addButtonClick() {
-        // Get the value from the input field
-        var inputValue = document.getElementById("inputField").value;
-        
-        // Call the function to send data to ThingSpeak
-        sendDataToThingSpeak(inputValue);
-      }
-  
-      // Function to auto-refresh the iframe every 30 seconds (adjust the interval as needed)
-      function autoRefresh() {
-        var iframe = document.getElementById("thingSpeakWidget");
-        iframe.src = iframe.src; // Refresh the iframe by setting its source again
-      }
-  
-      // Set the auto-refresh interval
-      setInterval(autoRefresh, 1000); // Refresh every 30 seconds
-    </script>
 </head>
 
 <body onload="result()">
@@ -71,12 +63,22 @@
             <h3>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h3>
             <div id="exercises" style="text-align:left; "></div>
 
-            <h3 id="guide1"></h3>
+            <div id="circleContainer">
+                <svg id="circle" width="100" height="100">
+                    <circle cx="50" cy="50" r="50" stroke="blue" stroke-width="4" fill="none" />
+<circle id="redCircle" cx="50" cy="50" r="15" stroke="black" stroke-width="2" fill="red" />
 
-            <img src="point.gif" style="width: 100px; ">
+                    <!-- Direction labels -->
+
+                </svg>
+                <text id="anterior-label" class="direction-label">Anterior</text>
+                <text id="posterior-label" class="direction-label">Posterior</text>
+                <text id="left-label" class="direction-label">Left</text>
+                <text id="right-label" class="direction-label">Right</text>
+            </div>
             <br>
 
-            <iframe id="thingSpeakWidget" width="auto" height="260"
+            <iframe id="thingSpeakWidget" width="auto" height="260" onload="autoRefresh()"
                 style="border: 1px solid #cccccc;background-color: transparent;"
                 src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
             <br><br>

@@ -9,247 +9,35 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 
-<body>
+<body onload="showImages()">
     <center>
         <br><br><br><br><br><br><br><br><br><br>
         <div id="Container" class="video">
-            <h1>Buzzing Wire Test </h1>
-
+            <h1>Buzzing Wire Test</h1>
             <p id="condition"></p>
-            <h2 id="exerciseLabel" style="display: none;">Try doing this exercise:</h2>
             <p id="result" style="display: none;"></p>
-
-            <!-- Countdown Timer -->
             <div id="countdown" style="display: none;">
-                <h2 id="retryLabel">Retry available in:</h2>
-                <div id="timer"></div>
-                <!-- Display the retry date -->
-                <div id="retryDateDisplay" style="color: red;"></div>
+                <h2>Retry available in:</h2>
+                <div id="timer" style="color: red;font-size: large;"></div>
+                <div id="test_number" style="color: red;font-size: large;"></div>
             </div>
+            <h2 id="try" style="display: none;">Try doing this exercise:</h2>
 
-            <div onload="showImage()">
-                <img id="imageMinor" src="3.jpg" alt="Minor" style="display: none;" width="100%">
-                <img id="imageMild" src="2.jpg" alt="Mild" style="display: none;" width="100%">
-                <img id="imageModerate" src="1.jpg" alt="Moderate" style="display: none;" width="100%">
-            </div>
-
+            <img id="imageMinor" src="3.jpg" alt="Minor" style="display: none;" width="100%">
+            <img id="imageMild" src="2.jpg" alt="Mild" style="display: none;" width="60%" height="500px">
+            <img id="imageModerate" src="1.jpg" alt="Moderate" style="display: none;" width="100%">
             <h2 id="not" style="color: red;"></h2>
-            <div id="send" style="display: none;">
+            <div id="enter" style="display: none;">
                 <h3>Enter the number of right attempts in the Buzzing Wire test:</h3>
                 <input type="number" id="attemptsInput">
                 <br>
-                <button type="button" id="Buzzing_Wire_Test">Send</button> <!-- Changed type to button -->
-                <br>
+                <button type="submit" id="Buzzing_Wire_Test" onclick="checkAttempts()">Send</button>
             </div>
+            <br>
             <button onclick="back()" id="start_test">Back</button>
         </div>
     </center>
 
-    <script>
-        document.getElementById('Buzzing_Wire_Test').addEventListener('click', function () {
-            checkAttempts();
-        });
-
-        function checkAttempts() {
-            let attemptsInput = document.getElementById('attemptsInput').value;
-            let maxAttempts;
-            let retryCooldown = 3;
-
-            // Replace this with your logic to determine maxAttempts based on totalScore
-            let totalScore = 0; // Replace with your actual totalScore calculation
-            if (totalScore >= 5) {
-                maxAttempts = 5;
-
-                if (attemptsInput >= maxAttempts) {
-                // Calculate the retry date
-                let retryDate = new Date();
-                retryDate.setDate(retryDate.getDate() + retryCooldown);
-
-                // Show the countdown
-                showCountdown(retryDate);
-            }
-
-            } else if (totalScore >= 6 && totalScore <= 10) {
-                maxAttempts = 7;
-                if (attemptsInput >= maxAttempts) {
-                // Calculate the retry date
-                let retryDate = new Date();
-                retryDate.setDate(retryDate.getDate() + retryCooldown);
-
-                // Show the countdown
-                showCountdown(retryDate);
-            }
-            } else if (totalScore >= 11 && totalScore <= 15) {
-                maxAttempts = 9;
-                if (attemptsInput >= maxAttempts) {
-                // Calculate the retry date
-                let retryDate = new Date();
-                retryDate.setDate(retryDate.getDate() + retryCooldown);
-
-                // Show the countdown
-                showCountdown(retryDate);
-            }
-            }
-            else {
-                // Continue with your logic for attempts less than maxAttempts
-                // ...
-                localStorage.removeItem('totalScoreFromSurvey');
-                showImages();
-
-                // You may want to clear any existing countdown
-                hideCountdown();
-            }
-            let storedRetryDate = localStorage.getItem('retryDate');
-            let totalScoreFromSurvey = localStorage.getItem('totalScoreFromSurvey');
-
-            if (storedRetryDate) {
-                let retryDate = new Date(storedRetryDate);
-                let now = new Date();
-
-                if (now < retryDate) {
-                    // Show countdown if the retry date is still in the future
-                    document.getElementById('imageMinor').style.display = 'none';
-                    document.getElementById('imageMild').style.display = 'none';
-                    document.getElementById('imageModerate').style.display = 'none';
-                    document.getElementById('countdown').style.display = 'block';
-                    document.getElementById('exerciseLabel').style.display = 'none';
-                    document.getElementById('send').style.display = 'none';
-
-                    // Display the retry date
-                    displayRetryDate(retryDate);
-
-                    startCountdown(retryDate);
-                    return;
-                } else {
-                    // Clear the stored retry date if it has passed
-                    localStorage.removeItem('retryDate');
-
-                    // If totalScore is from the survey, reset the retry date and totalScore
-                    if (totalScoreFromSurvey) {
-                        localStorage.removeItem('totalScoreFromSurvey');
-                        totalScore = 0; // Reset totalScore
-                        showImages();
-                        return;
-                    }
-                }
-            }
-
-        
-        }
-
-        function showCountdown(retryDate) {
-            // Store the retry date in localStorage
-            localStorage.setItem('retryDate', retryDate.toISOString());
-
-            // Store the start time in localStorage
-            localStorage.setItem('startTime', new Date().toISOString());
-
-            // Reset totalScore when showing the countdown
-            totalScore = 0;
-
-            // Hide the images
-            document.getElementById('imageMinor').style.display = 'none';
-            document.getElementById('imageMild').style.display = 'none';
-            document.getElementById('imageModerate').style.display = 'none';
-
-            document.getElementById('exerciseLabel').style.display = 'none';
-            document.getElementById('send').style.display = 'none';
-
-            // Show the countdown
-            document.getElementById('countdown').style.display = 'block';
-
-            // Display the retry date
-            displayRetryDate(retryDate);
-
-            // Start the countdown
-            startCountdown(retryDate);
-        }
-
-        function hideCountdown() {
-            // Hide the countdown
-            document.getElementById('countdown').style.display = 'none';
-        }
-
-        function showImages() {
-            // Show the images
-            document.getElementById('imageMinor').style.display = 'block';
-            document.getElementById('imageMild').style.display = 'block';
-            document.getElementById('imageModerate').style.display = 'block';
-
-            // Hide the countdown
-            hideCountdown();
-
-            // Clear the interval if needed
-            clearInterval(timerInterval);
-        }
-
-        function startCountdown(endDate) {
-            let timerElement = document.getElementById('timer');
-
-            function updateTimer() {
-                let now = new Date();
-                let timeDifference = endDate - now;
-
-                if (timeDifference <= 0) {
-                    // Show the images when the countdown is done
-                    showImages();
-                } else {
-                    // Update the countdown
-                    let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                    let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                    let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-                    timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }
-            }
-
-            // Update the timer every second
-            let timerInterval = setInterval(updateTimer, 1000);
-
-            // Initial update
-            updateTimer();
-        }
-
-        // Display the retry date
-        function displayRetryDate(retryDate) {
-            let retryDateDisplay = document.getElementById('retryDateDisplay');
-            let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
-            let formattedRetryDate = retryDate.toLocaleDateString('en-US', options);
-            retryDateDisplay.innerHTML = `Retry Available on: ${formattedRetryDate}`;
-        }
-
-        // Load retry date from local storage and start countdown if needed
-        document.addEventListener('DOMContentLoaded', function () {
-            const storedRetryDate = localStorage.getItem('retryDate');
-            const startTime = localStorage.getItem('startTime');
-            const totalScoreFromSurvey = localStorage.getItem('totalScoreFromSurvey');
-
-            if (storedRetryDate) {
-                let retryDate = new Date(storedRetryDate);
-                let now = new Date();
-
-                if (now < retryDate) {
-                    // Show countdown if the retry date is still in the future
-                    document.getElementById('countdown').style.display = 'block';
-                    startCountdown(retryDate);
-
-                    // Display the retry date
-                    displayRetryDate(retryDate);
-                } else {
-                    // Clear the stored retry date if it has passed
-                    localStorage.removeItem('retryDate');
-                    localStorage.removeItem('startTime');
-
-                    if (totalScoreFromSurvey) {
-                        // If totalScore is from the survey, reset the totalScore and show the images
-                        localStorage.removeItem('totalScoreFromSurvey');
-                        showImages();
-                    }
-                }
-            }
-        });
-    </script>
     <script src="script.js"></script>
 </body>
 

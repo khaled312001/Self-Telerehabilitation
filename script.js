@@ -50,21 +50,7 @@ function result() {
   performDirection(conditions[0], conditions.slice(1));
 }
 
-function performDirection(direction, remainingDirections) {
-  const targetTilt = getTargetTiltForDirection(direction);
-  
-  // Display instructions and target angles for the current direction
-  document.getElementById('exercises').innerHTML = `
-    <h2>Focus on the point and lean your body in ${direction.toLowerCase()} direction</h2>
-    <ul>
-      <li>${targetTilt} of ${direction} target angle: ${getTargetRangeForDirection(direction).join(':')} degrees</li>
-    </ul>
-    <p>Score for ${direction}: ${getScoreDisplay(0, targetTilt)}</p>
-  `;
 
-  // Wait for the user to achieve the target before moving to the next direction
-  waitForAchievement(direction, remainingDirections);
-}
 
 function waitForAchievement(direction, remainingDirections) {
   let intervalId;
@@ -300,8 +286,10 @@ function result() {
 
 }
 
-// ... (rest of your code)
 
+// ... (previous code)
+
+// In the performExercises function:
 function performExercises(count, targetTilts) {
   const anteriorTarget = [25, 30];
   const posteriorTarget = [16, 21];
@@ -311,29 +299,88 @@ function performExercises(count, targetTilts) {
   const exercisesElement = document.getElementById('exercises');
   exercisesElement.innerHTML = '<h2>Perform the following exercises:</h2><ul>';
 
-  // Display the target angles for each direction
-  exercisesElement.innerHTML += `<li>${targetTilts[0]} of Anterior target angle: ${anteriorTarget[0]}:${anteriorTarget[1]} degrees</li>`;
-  exercisesElement.innerHTML += `<li>${targetTilts[1]} of Posterior target angle: ${posteriorTarget[0]}:${posteriorTarget[1]} degrees</li>`;
-  exercisesElement.innerHTML += `<li>${targetTilts[2]} of Left target angle: ${leftTarget[0]}:${leftTarget[1]} degrees</li>`;
-  exercisesElement.innerHTML += `<li>${targetTilts[3]} of Right target angle: ${rightTarget[0]}:${rightTarget[1]} degrees</li>`;
-  exercisesElement.innerHTML += '</ul>';
-
-  // Display the achieved score for each direction
   const conditions = ['Anterior', 'Posterior', 'Left', 'Right'];
-  conditions.forEach((direction, index) => {
-    let achievedScore = getAchievedScore(lastUpdatedAngle, eval(`${direction.toLowerCase()}Target`), targetTilts[index], getCondition(totalScore));
-    exercisesElement.innerHTML += `<p>Score for ${direction}: ${achievedScore}</p>`;
 
-  });
+  // Track completion status for each direction
+  const completionStatus = {
+    Anterior: false,
+    Posterior: false,
+    Left: false,
+    Right: false,
+  };
 
+  // Loop through each direction
+// ... (previous code)
+
+// Loop through each direction
+for (let i = 0; i < conditions.length; i++) {
+  const direction = conditions[i];
+  const targetTilt = targetTilts[i];  // Make sure this is the correct target tilt for the current direction
+  const targetRange = eval(`${direction.toLowerCase()}Target`);
+
+  // Display the target angle for the current direction
+  exercisesElement.innerHTML += `<li>${targetTilt} of ${direction} target angle: ${targetRange[0]}:${targetRange[1]} degrees</li>`;
+
+  // Check if the direction is completed before displaying progress
+  if (completionStatus[direction]) {
+    // Display a message to perform the next direction if not the last one
+    if (i < conditions.length - 1) {
+      exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
+    }
+    continue;  // Skip evaluating score and progress for this direction if already completed
+  }
+
+  // Display the achieved score and progress for the current direction
+  let achievedScore = getAchievedScore(targetRange, targetTilt, getCondition(totalScore));
+
+  // Display the achieved score and progress for the current direction
+  exercisesElement.innerHTML += `<p>Score for ${direction}: ${achievedScore}</p>`;
+
+  // If the achieved score is 1, mark the direction as completed
+  if (achievedScore.includes('Achieved')) {
+    completionStatus[direction] = true;
+
+    // Display a message to perform the next direction if not the last one
+    if (i < conditions.length - 1) {
+      exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
+    }
+  }
 }
 
+// ... (remaining code)
 
 
-function getScoreDisplay(score, targetTilt) {
-  
-  return score > 0 ? `Achieved (${score} / ${targetTilt})` : `Not Achieved`;
+  exercisesElement.innerHTML += '</ul>';
 }
+
+// In the getAchievedScore function:
+// في الدالة getAchievedScore:
+function getAchievedScore(targetRange, targetTilt, condition) {
+  const newAngle = parseInt(localStorage.getItem('currentAngle'), 10);  // Initialize score and isAchieved variables
+  let score = 0;
+  let isAchieved = false;
+
+  // Calculate the achieved range based on the condition for the current direction
+  const achievedRange = calculateAchievedRange(targetRange, condition);
+
+  // Check if the angle falls within the achieved range for the current direction
+  isAchieved = newAngle >= achievedRange[0] && newAngle <= achievedRange[1];
+
+  // Increment the score by 1 only if the achieved score is 0 and the target tilt is also 0
+  if (isAchieved && targetTilt === 0) {
+    score ++ ;
+  }
+
+  // Display "Achieved" when score becomes equal to targetTilt, otherwise "Not Achieved"
+  const achievementStatus = isAchieved ? "Achieved" : "Not Achieved";
+
+  // Calculate progress as a percentage
+  const progress = (score / targetTilt) * 100;
+
+  // Return the result for the current direction
+  return `${achievementStatus} [(${score} / ${targetTilt}), Progress: ${isNaN(progress) ? 'NaN' : progress.toFixed(0)}%]`;
+}
+
 
 function getCondition(score) {
   if (score <= 5) {
@@ -347,26 +394,7 @@ function getCondition(score) {
   }
 }
 
-function getAchievedScore(angle, targetRange, targetTilt, condition) {
-  // Calculate the achieved range based on the condition
-  const achievedRange = calculateAchievedRange(targetRange, condition);
 
-  // Check if the angle falls within the achieved range
-  const isAchieved = angle >= achievedRange[0] && angle <= achievedRange[1];
-
-  // Initialize score to 0
-  let score = 0;
-
-  if (isAchieved) {
-    // If achieved, set score to 1 (or any other value as needed)
-    score = 1;
-    return `Achieved (${score} / ${targetTilt})`;
-  } else {
-    // If not achieved, set score to 0
-    score = 0;
-    return `Not Achieved (${score} / ${targetTilt})`;
-  }
-}
 
 function calculateAchievedRange(targetRange, condition) {
   // Calculate the achieved range based on the condition
@@ -381,8 +409,28 @@ function Tilting_Test() {
 }
 
 function Buzzing_Wire_Test() {
-  window.location.href = 'buzzing wire_test.html';
+  const totalScore = parseInt(localStorage.getItem('totalScore'), 10);
+  const storedEndDate = localStorage.getItem('timerEndDate');
+
+  if (storedEndDate) {
+    // Timer end date is stored
+    const retryDate = new Date(parseInt(storedEndDate, 10));
+    const now = new Date();
+
+    if (retryDate > now) {
+      // Timer not ended, redirect to buz.html with saved date in local storage
+      window.location.href = 'buz.html';
+    } else {
+      // Timer ended, remove saved date in local storage and redirect to result.html
+      localStorage.removeItem('timerEndDate');
+      window.location.href = 'result.html';
+    }
+  } else {
+    // Timer end date not stored, proceed with the original behavior
+    window.location.href = 'buzzing wire_test.html';
+  }
 }
+
 
 function back() {
   window.location.href = 'result.html';
@@ -405,6 +453,8 @@ let hasAchievedTarget = false;
 
 // ... (previous code)
 
+// ... (previous code)
+
 async function updateAngle() {
   try {
     // Fetch data from ThingSpeak API
@@ -414,24 +464,11 @@ async function updateAngle() {
     // Extract the angle value from the response and parse it as an integer
     const newAngle = parseInt(data.feeds[0].field1);
 
-    // Display instruction when angle is 0
-    if (newAngle === 0) {
-      document.getElementById('exercises').innerHTML = `
-        <h2>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h2>
-        <h2>Perform the following exercises:</h2>
-        <ul>
-          <li>8 of Anterior target angle: 25:30 degrees</li>
-          <li>6 of Posterior target angle: 16:21 degrees</li>
-          <li>10 of Left target angle: 21:26 degrees</li>
-          <li>10 of Right target angle: 21:26 degrees</li>
-        </ul>
-        <p>Score for Anterior: ${getScoreDisplay(scoreAnterior, 8)}</p>
-        <p>Score for Posterior: ${getScoreDisplay(scorePosterior, 6)}</p>
-        <p>Score for Left: ${getScoreDisplay(scoreLeft, 10)}</p>
-        <p>Score for Right: ${getScoreDisplay(scoreRight, 10)}</p>
-      `;
-    }
+    // Save the new angle in local storage
+    localStorage.setItem('currentAngle', newAngle);
 
+    // Display instruction when angle is 0
+ 
     // Check if the angle has returned to zero
     if (lastUpdatedAngle > 0 && newAngle === 0) {
       isWaitingForZero = true;
@@ -440,7 +477,7 @@ async function updateAngle() {
 
     if (isWaitingForZero && newAngle !== 0) {
       // Check if the angle achieves the target
-      const direction = getDirectionBasedOnAngle(newAngle); // Implement your logic to determine the direction based on the angle
+      const direction = getDirectionBasedOnAngle(newAngle);
       const targetTilt = calculateDynamicTargetTilt(direction, getCondition(totalScore));
 
       if (newAngle === targetTilt) {
@@ -449,9 +486,9 @@ async function updateAngle() {
     }
 
     if (isWaitingForZero && hasAchievedTarget && newAngle === 0) {
-      incrementScore(); // Increment the score when the angle achieves the target
-      isWaitingForZero = false; // Reset the flag
-      hasAchievedTarget = false; // Reset the flag
+      incrementScore();
+      isWaitingForZero = false;
+      hasAchievedTarget = false;
     }
 
     // Update the current angle value
@@ -462,6 +499,11 @@ async function updateAngle() {
     console.error('Error fetching data:', error);
   }
 }
+
+// ... (rest of your code)
+
+// Set interval to update the angle every 1 second
+setInterval(updateAngle, 1000);
 
 // ... (rest of the code)
 
@@ -476,14 +518,13 @@ updateAngle();
 
 
 
-var maxAttempts; // Change this value as needed
-var retryCooldown = 2; // Number of days to wait for a retry
-var currentDate;
 
-function checkAttempts() {
+function buz()
+{
+  const totalScore = parseInt(localStorage.getItem('totalScore'), 10);
+  let maxAttempts; // Change this value as needed
+
   let attemptsInput = document.getElementById('attemptsInput').value;
-  let totalScore = parseInt(localStorage.getItem('totalScore'), 10);
-
   if (totalScore <= 5) {
     maxAttempts = 5;
   } else if (totalScore >= 6 && totalScore <= 10) {
@@ -492,85 +533,85 @@ function checkAttempts() {
     maxAttempts = 9;
   }
 
-  let condition = document.getElementById('condition').innerText;
-  if (attemptsInput <= maxAttempts) {
-    let retryDate = new Date(currentDate);
 
+    if (attemptsInput <= maxAttempts) {
+      localStorage.setItem('buzCompleted', 'true');
 
-    document.getElementById('countdown').style.display = 'block';
-    startCountdown(retryDate);
-    document.getElementById('imageMinor').style.display = 'none';
-    document.getElementById('imageMild').style.display = 'none';
-    document.getElementById('imageModerate').style.display = 'none';
-    document.getElementById('try').style.display = 'none';
-    document.getElementById('enter').style.display = 'none';
-  
-  } else {
-    document.getElementById('countdown').style.display = 'none';
-showImages();
-    displayTestNumber();
-  }
+      window.location.href = 'buz.html';
+    }
+    else{
+      let comtinue = document.getElementById('comtinue');
+      // You may need to fetch the current test number from somewhere or calculate it based on completed tests
+      let currentTestNumber = 1; // Replace with your logic to get the current test number
+    
+      comtinue.innerHTML = `very Good , You Can Continue`;
+    }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  currentDate = new Date(); // Set the current date when the document is loaded
 
-  // Check for stored timer data
-  let storedTimerEndDate = localStorage.getItem('timerEndDate');
+function checkAndbuz() {
+  let buzCompleted = localStorage.getItem('buzCompleted');
 
-  if (storedTimerEndDate) {
-    let retryDate = new Date(parseInt(storedTimerEndDate, 10));
-
-    if (retryDate > new Date()) {
-      // If the retry date is in the future, show the countdown
-      document.getElementById('countdown').style.display = 'block';
-      startCountdown(retryDate);
-      
-    } else {
-      // If the retry date has passed, show the images, input box, and send button
-      showImages();
-    }
-  } else {
-    // If there's no stored timer data, show the images, input box, and send button
-    showImages();
+  // Check if the survey has been completed
+  if (buzCompleted === 'true') {
+    // Survey has already been completed, redirect to result.html
+    window.location.href = 'buz.html';
   }
-});
+  else {
+    localStorage.removeItem('timerEndDate');
+    window.location.href = 'test2.html';
 
-function startCountdown(endDate) {
-  let timerElement = document.getElementById('timer');
+  }
+}
+function startCountdown() {
+  // Retrieve the timer end date from local storage
+  let storedEndDate = localStorage.getItem('timerEndDate');
+
+  // If a stored end date exists and it is in the future, use it; otherwise, calculate a new end date
+  let retryDate = storedEndDate ? new Date(parseInt(storedEndDate, 10)) : calculateNewEndDate();
+
+  function calculateNewEndDate() {
+      // Calculate retry date as 24 hours from the current date
+      let newRetryDate = new Date();
+      newRetryDate.setHours(newRetryDate.getHours() + 48);
+      return newRetryDate;
+  }
 
   function updateTimer() {
-    let now = new Date();
-    let timeDifference = endDate - now;
+      let now = new Date();
+      let timeDifference = retryDate - now;
+      let timerElement = document.getElementById('timer');
 
-    if (timeDifference <= 0) {
-      // Show the images when the countdown is done
-      showImages();
-      clearInterval(timerInterval); // Stop the timer interval
-      localStorage.removeItem('timerEndDate'); // Remove stored timer data
-    } else {
-      // Update the countdown
       let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
       let hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       let minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
       let seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
       timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      localStorage.setItem('timerEndDate', endDate.getTime()); // Store countdown end date
-      displayTestNumber()
-    }
+
+      // Save the updated timer end date in local storage
+      localStorage.setItem('timerEndDate', retryDate.getTime());
+
+      displayTestNumber();
   }
 
   // Update the timer only when needed, i.e., when the retry date is in the future
-  if (endDate > new Date()) {
-    // Update the timer every second
-    let timerInterval = setInterval(updateTimer, 1000);
-
-    // Initial update
-    updateTimer();
+  if (retryDate > new Date()) {
+      let timerInterval = setInterval(updateTimer, 1000);
+      // Initial update
+      updateTimer();
   }
 }
 
+
+
+function displayTestNumber() {
+  let testNumberDisplay = document.getElementById('test_number');
+  // You may need to fetch the current test number from somewhere or calculate it based on completed tests
+  let currentTestNumber = 1; // Replace with your logic to get the current test number
+
+  testNumberDisplay.innerHTML = `The test number is: ${currentTestNumber}/18`;
+}
 // ... (the rest of your code remains unchanged)
 
 // ... (the rest of your code remains unchanged)
@@ -601,6 +642,8 @@ function showImages() {
   document.getElementById('imageMild').style.display = 'none';
   document.getElementById('imageModerate').style.display = 'none';
 
+  document.getElementById('try').style.display = 'block';
+  document.getElementById('enter').style.display = 'block';
   if (totalScore <= 5) {
     document.getElementById('imageMinor').style.display = 'block';
   } else if (totalScore >= 6 && totalScore <= 10) {
@@ -609,8 +652,7 @@ function showImages() {
     document.getElementById('imageModerate').style.display = 'block';
   }
 
-  document.getElementById('try').style.display = 'block';
-  document.getElementById('enter').style.display = 'block';
+  result();
 
   let retryDate = new Date(localStorage.getItem('retryDate'));
 
@@ -619,34 +661,16 @@ function showImages() {
     document.getElementById('enter').style.display = 'block';
   }
   checkAttempts();
-  result();
 }
+
 
 document.getElementById('Buzzing_Wire_Test').addEventListener('click', function () {
   checkAttempts();
 });
 
-// ... (the rest of your code remains unchanged)
-
-// In your code, make sure to call startCountdown with the correct end date when necessary, such as after a user submits an attempt or when starting a new attempt.
-
-// For example, after a user successfully submits an attempt:
-// let retryDate = new Date();
-// retryDate.setDate(retryDate.getDate() + retryCooldown);
-// startCountdown(retryDate);
 
 
 
-
-
-// Display the test number
-function displayTestNumber() {
-  let testNumberDisplay = document.getElementById('test_number');
-  // You may need to fetch the current test number from somewhere or calculate it based on completed tests
-  let currentTestNumber = 1; // Replace with your logic to get the current test number
-
-  testNumberDisplay.innerHTML = `The test number is: ${currentTestNumber}/18`;
-}
 
 
 

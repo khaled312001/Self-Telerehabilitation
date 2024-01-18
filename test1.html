@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tilting Test</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css"> <!-- Create a separate CSS file for responsive styles -->
 
     <style>
         #circleContainer {
@@ -49,40 +50,80 @@
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-  
 </head>
 
 <body onload="result()">
-  <center>
-    <br><br><br><br><br><br><br><br><br><br>
-    <div id="Container" class="video">
-        <p id="condition"></p>
-        <h3>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h3>
-        <br>
-        <!-- <div id="circleContainer">
-            <svg id="circle" width="100" height="100">
-                <circle cx="50" cy="50" r="50" stroke="blue" stroke-width="4" fill="none" />
-                <circle id="redCircle" cx="50" cy="50" r="15" stroke="black" stroke-width="2" fill="red" />
-            </svg>
-            <text id="anterior-label" class="direction-label">Anterior</text>
-            <text id="posterior-label" class="direction-label">Posterior</text>
-            <text id="left-label" class="direction-label">Left</text>
-            <text id="right-label" class="direction-label">Right</text>
-        </div> -->
-        <br>
-        <div id="exercises" style="text-align:center; "></div>
-        <iframe id="thingSpeakWidget" width="auto" height="260" onload="autoRefresh()"
-            style="border: 1px solid #cccccc;background-color: transparent;"
-            src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
-        <br><br>
-        <p id="result" style="display: none;"></p>
-        <br><br>
-        <button onclick="back()" id="start_test">Back </button>
-    </div>
-</center>
-<script src="script.js"></script>
+    <center>
+        <br><br><br><br><br><br><br><br><br><br>
+        <div id="Container" class="video">
+            <p id="condition"></p>
+            <h3>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h3>
+            <br>
+            <div id="circleContainer">
+                <svg id="circle" width="100" height="100">
+                    <circle cx="50" cy="50" r="50" stroke="blue" stroke-width="4" fill="none" />
+                    <circle id="redCircle" cx="50" cy="50" r="15" stroke="black" stroke-width="2" fill="red" />
+                </svg>
+                <text id="anterior-label" class="direction-label">Anterior</text>
+                <text id="posterior-label" class="direction-label">Posterior</text>
+                <text id="left-label" class="direction-label">Left</text>
+                <text id="right-label" class="direction-label">Right</text>
+            </div>
+            <br>
+            <div id="exercises" style="text-align:center;">
+                <h2>Perform the following exercises:</h2>
+                <ul>
+                    <!-- Placeholder for exercises -->
+                </ul>
+            </div>
+            <iframe id="thingSpeakWidget" width="auto" height="260" onload="autoRefresh()"
+                style="border: 1px solid #cccccc;background-color: transparent;"
+                src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
+            <br><br>
+            <p id="result" style="display: none;"></p>
+            <br><br>
+            <button onclick="back()" id="start_test">Back </button>
+        </div>
+    </center>
 
+    <script src="script.js"></script>
+
+    <script>
+        // Dummy data for testing, replace it with your actual progress data
+        const progressData = [
+            { direction: 'Anterior', targetTilt: 6, targetRange: [25, 30], achievedScore: 0, progress: 0 },
+            { direction: 'Posterior', targetTilt: 4, targetRange: [16, 21], achievedScore: 0, progress: 0 },
+            { direction: 'Left', targetTilt: 8, targetRange: [21, 26], achievedScore: 0, progress: 0 },
+            { direction: 'Right', targetTilt: 8, targetRange: [21, 26], achievedScore: 0, progress: 0 }
+        ];
+
+        // Call a function to dynamically update the exercises section based on progress
+        updateExercisesProgress();
+
+        function updateExercisesProgress() {
+            const exercisesElement = document.getElementById('exercises').getElementsByTagName('ul')[0];
+            exercisesElement.innerHTML = ''; // Clear existing content
+
+            const conditions = ['Anterior', 'Posterior', 'Left', 'Right'];
+
+            // Loop through each direction
+            for (let i = 0; i < conditions.length; i++) {
+                const direction = conditions[i];
+                const { targetTilt, targetRange, achievedScore, progress } = progressData[i];
+
+                // Display the target angle for the current direction
+                exercisesElement.innerHTML += `<li>${targetTilt} of ${direction} target angle: ${targetRange[0]}:${targetRange[1]} degrees</li>`;
+
+                // Display the achieved score and progress for the current direction
+                exercisesElement.innerHTML += `<p>Score for ${direction}: ${achievedScore} [(${achievedScore} / ${targetTilt}), Progress: ${progress.toFixed(2)}%]</p>`;
+
+                // Display a message to perform the next direction if not the last one
+                if (i < conditions.length - 1) {
+                    exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

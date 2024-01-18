@@ -296,8 +296,6 @@ function performExercises(count, targetTilts) {
   const leftTarget = [21, 26];
   const rightTarget = [21, 26];
 
-  const exercisesElement = document.getElementById('exercises');
-  exercisesElement.innerHTML = '<h2>Perform the following exercises:</h2><ul>';
 
   const conditions = ['Anterior', 'Posterior', 'Left', 'Right'];
 
@@ -315,19 +313,18 @@ function performExercises(count, targetTilts) {
 // Loop through each direction
 for (let i = 0; i < conditions.length; i++) {
   const direction = conditions[i];
-  const targetTilt = targetTilts[i];  // Make sure this is the correct target tilt for the current direction
+  const targetTilt = targetTilts[i];
   const targetRange = eval(`${direction.toLowerCase()}Target`);
 
   // Display the target angle for the current direction
-  exercisesElement.innerHTML += `<li>${targetTilt} of ${direction} target angle: ${targetRange[0]}:${targetRange[1]} degrees</li>`;
 
   // Check if the direction is completed before displaying progress
   if (completionStatus[direction]) {
-    // Display a message to perform the next direction if not the last one
-    if (i < conditions.length - 1) {
-      exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
-    }
-    continue;  // Skip evaluating score and progress for this direction if already completed
+      // Display a message to perform the next direction if not the last one
+      if (i < conditions.length - 1) {
+          exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
+      }
+      continue;  // Skip evaluating score and progress for this direction if already completed
   }
 
   // Display the achieved score and progress for the current direction
@@ -338,12 +335,12 @@ for (let i = 0; i < conditions.length; i++) {
 
   // If the achieved score is 1, mark the direction as completed
   if (achievedScore.includes('Achieved')) {
-    completionStatus[direction] = true;
+      completionStatus[direction] = true;
 
-    // Display a message to perform the next direction if not the last one
-    if (i < conditions.length - 1) {
-      exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
-    }
+      // Display a message to perform the next direction if not the last one
+      if (i < conditions.length - 1) {
+          exercisesElement.innerHTML += `<p>Move on to the next direction.</p>`;
+      }
   }
 }
 

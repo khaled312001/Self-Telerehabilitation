@@ -54,44 +54,34 @@
 </head>
 
 <body onload="result()">
-    <center>
-        <br><br><br><br><br><br><br><br><br><br>
-        <div id="Container" class="video">
-
-            <p id="condition"></p>
-
-            <h3>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h3>
-            <br>
-
-            <div id="circleContainer">
-                <svg id="circle" width="100" height="100">
-                    <circle cx="50" cy="50" r="50" stroke="blue" stroke-width="4" fill="none" />
-<circle id="redCircle" cx="50" cy="50" r="15" stroke="black" stroke-width="2" fill="red" />
-
-                    <!-- Direction labels -->
-
-                </svg>
-                <text id="anterior-label" class="direction-label">Anterior</text>
-                <text id="posterior-label" class="direction-label">Posterior</text>
-                <text id="left-label" class="direction-label">Left</text>
-                <text id="right-label" class="direction-label">Right</text>
-            </div>
-            <br>
-            <div id="exercises" style="text-align:center; "></div>
-
-            <iframe id="thingSpeakWidget" width="auto" height="260" onload="autoRefresh()"
-                style="border: 1px solid #cccccc;background-color: transparent;"
-                src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
-            <br><br>
-            <p id="result" style="display: none;"></p>
-            <br><br>
-
-            <button onclick="back()" id="start_test">Back </button>
-
+  <center>
+    <br><br><br><br><br><br><br><br><br><br>
+    <div id="Container" class="video">
+        <p id="condition"></p>
+        <h3>Focus on the point and lean your body forward, backward, right, and left to achieve your goal</h3>
+        <br>
+        <div id="circleContainer">
+            <svg id="circle" width="100" height="100">
+                <circle cx="50" cy="50" r="50" stroke="blue" stroke-width="4" fill="none" />
+                <circle id="redCircle" cx="50" cy="50" r="15" stroke="black" stroke-width="2" fill="red" />
+            </svg>
+            <text id="anterior-label" class="direction-label">Anterior</text>
+            <text id="posterior-label" class="direction-label">Posterior</text>
+            <text id="left-label" class="direction-label">Left</text>
+            <text id="right-label" class="direction-label">Right</text>
         </div>
-    </center>
-
-    <script src="script.js"></script>
+        <br>
+        <div id="exercises" style="text-align:center; "></div>
+        <iframe id="thingSpeakWidget" width="auto" height="260" onload="autoRefresh()"
+            style="border: 1px solid #cccccc;background-color: transparent;"
+            src="https://thingspeak.com/channels/2383735/widgets/773108"></iframe>
+        <br><br>
+        <p id="result" style="display: none;"></p>
+        <br><br>
+        <button onclick="back()" id="start_test">Back </button>
+    </div>
+</center>
+<script src="script.js"></script>
 
 </body>
 
